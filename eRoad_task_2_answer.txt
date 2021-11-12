@@ -1,0 +1,61 @@
+package com.codility.tasks.spring.healthcheck;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Date;
+import java.util.TimeZone;
+import java.time.ZonedDateTime;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+@RestController
+class HealthcheckController {
+
+    @GetMapping(value = "/healthcheck", produces=MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> healthcheck(@RequestParam(value="format") String format) {
+        Map<String, String> response = new HashMap<>();
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        Date date = new Date();
+
+        DateFormat sdf;
+        sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(tz);
+        String text = sdf.format(date);
+
+        if (format.equals("short"))   {
+            response.put("status", "OK");
+
+        }   else if (format.equals("full")) {
+            response.put("currentTime", text);
+            response.put("status", "OK");
+            
+        }   else{
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
+    @PutMapping(value = "/healthcheck")
+    public ResponseEntity<Object> healthcheckPut() {
+
+        return new ResponseEntity<>(null, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @PostMapping(value = "/healthcheck")
+    public ResponseEntity<Object> healthcheckPost() {
+        return new ResponseEntity<>(null, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+
+    @DeleteMapping(value = "/healthcheck")
+    public ResponseEntity<Object> healthcheckDelete() {
+        return new ResponseEntity<>(null, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+}
